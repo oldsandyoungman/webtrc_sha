@@ -4,8 +4,8 @@ var https = require('https');
 var fs = require('fs');
 
 var options = {
-  key  : fs.readFileSync('./cert/1557605_www.learningrtc.cn.key'),
-  cert : fs.readFileSync('./cert/1557605_www.learningrtc.cn.pem')
+  key  : fs.readFileSync('./cert/rustling.xyz.key'),
+  cert : fs.readFileSync('./cert/rustling.xyz.pem')
 }
 
 var app = https.createServer(options, function(req, res){
