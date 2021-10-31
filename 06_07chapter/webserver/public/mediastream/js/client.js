@@ -95,7 +95,12 @@ function start() {
 			audio : false 
 		}
 
-		navigator.mediaDevices.getUserMedia(constraints)
+		// navigator.mediaDevices.getUserMedia(constraints)
+		// 	.then(gotMediaStream)
+		// 	.then(gotDevices)
+		// 	.catch(handleError);
+
+		navigator.mediaDevices.getDisplayMedia(constraints)
 			.then(gotMediaStream)
 			.then(gotDevices)
 			.catch(handleError);
