@@ -22,6 +22,6 @@ var https_server = https.createServer(options, app);
 https_server.listen(443, '0.0.0.0');
 
 var http_server = http.createServer(app);
-http_server.listen(80, '0.0.0.0');
+http_server.listen(8080, '0.0.0.0');
 
 
