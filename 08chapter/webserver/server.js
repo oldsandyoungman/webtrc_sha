@@ -40,26 +40,24 @@ app.use(express.static('./public'));
 
 //http server
 var http_server = http.createServer(app);
-http_server.listen(80, '0.0.0.0');
+http_server.listen(8080, '0.0.0.0');
 
 var options = {
-	key : fs.readFileSync('./cert/1557605_www.learningrtc.cn.key'),
-	cert: fs.readFileSync('./cert/1557605_www.learningrtc.cn.pem')
+	key  : fs.readFileSync('./cert/rustling.xyz.key'),
+	cert : fs.readFileSync('./cert/rustling.xyz.pem')
 }
 
 //https server
 var https_server = https.createServer(options, app);
 
 //bind socket.io with https_server
-var io = socketIo.listen(https_server);
-var sockio = socketIo.listen(http_server);
+var io = socketIo(https_server);
+// var sockio = socketIo.listen(https_server);
 
 //connection
 io.sockets.on('connection', (socket)=>{
 
-	socket.on('message', (room, data)=>{
-		socket.to(room).emit('message', room, data)//房间内所有人,除自己外
-	});
+
 
 	//该函数应该加锁
 	socket.on('join', (room)=> {
@@ -103,40 +101,45 @@ io.sockets.on('connection', (socket)=>{
 	 	//socket.broadcast.emit('joined', room, socket.id);//除自己，全部站点	
 	});
 
-});
-
-//connection
-sockio.sockets.on('connection', (socket)=>{
-
 	socket.on('message', (room, data)=>{
-		sockio.in(room).emit('message', room, socket.id, data)//房间内所有人
+		socket.to(room).emit('message', room, data)//房间内所有人,除自己外
 	});
 
-	socket.on('join', (room)=> {
-		socket.join(room);
-		var myRoom = sockio.sockets.adapter.rooms[room];
-		var users = Object.keys(myRoom.sockets).length;
-		logger.log('the number of user in room is: ' + users);
-	 	socket.emit('joined', room, socket.id);	
-	 	//socket.to(room).emit('joined', room, socket.id);//除自己之外
-		//io.in(room).emit('joined', room, socket.id)//房间内所有人
-	 	//socket.broadcast.emit('joined', room, socket.id);//除自己，全部站点	
-	});
-
-	socket.on('leave', (room)=> {
-		var myRoom = sockio.sockets.adapter.rooms[room];
-		var users = Object.keys(myRoom.sockets).length;
-		//users - 1;
-
-		logger.log('the number of user in room is: ' + (users-1));
-
-		socket.leave(room);
-	 	socket.emit('leaved', room, socket.id);	
-	 	//socket.to(room).emit('joined', room, socket.id);//除自己之外
-		//io.in(room).emit('joined', room, socket.id)//房间内所有人
-	 	//socket.broadcast.emit('joined', room, socket.id);//除自己，全部站点	
-	});
 });
+
+
+// //connection
+// sockio.sockets.on('connection', (socket)=>{
+//
+// 	socket.on('message', (room, data)=>{
+// 		sockio.in(room).emit('message', room, socket.id, data)//房间内所有人
+// 	});
+//
+// 	socket.on('join', (room)=> {
+// 		socket.join(room);
+// 		var myRoom = sockio.sockets.adapter.rooms[room];
+// 		var users = Object.keys(myRoom.sockets).length;
+// 		logger.log('the number of user in room is: ' + users);
+// 	 	socket.emit('joined', room, socket.id);
+// 	 	//socket.to(room).emit('joined', room, socket.id);//除自己之外
+// 		//io.in(room).emit('joined', room, socket.id)//房间内所有人
+// 	 	//socket.broadcast.emit('joined', room, socket.id);//除自己，全部站点
+// 	});
+//
+// 	socket.on('leave', (room)=> {
+// 		var myRoom = sockio.sockets.adapter.rooms[room];
+// 		var users = Object.keys(myRoom.sockets).length;
+// 		//users - 1;
+//
+// 		logger.log('the number of user in room is: ' + (users-1));
+//
+// 		socket.leave(room);
+// 	 	socket.emit('leaved', room, socket.id);
+// 	 	//socket.to(room).emit('joined', room, socket.id);//除自己之外
+// 		//io.in(room).emit('joined', room, socket.id)//房间内所有人
+// 	 	//socket.broadcast.emit('joined', room, socket.id);//除自己，全部站点
+// 	});
+// });
 
 https_server.listen(443, '0.0.0.0');
 

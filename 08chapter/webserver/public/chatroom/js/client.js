@@ -1,6 +1,5 @@
 'use strict'
 
-//
 var userName = document.querySelector('input#username');
 var inputRoom = document.querySelector('input#room');
 var btnConnect = document.querySelector('button#connect');
